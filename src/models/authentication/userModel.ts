@@ -57,7 +57,6 @@ export const User = sequelize.define<UserInstance>('User', {
     },
     UserName: {
         type: DataTypes.STRING(50),
-        allowNull: false,
         unique: true
     },
     Gender: {
@@ -69,34 +68,35 @@ export const User = sequelize.define<UserInstance>('User', {
     },
     Email: {
         type: DataTypes.STRING(256),
+        allowNull: false,
         unique: true,
         validate: {
             isEmail: true,
         }
     },
-    Phone: {
-        type: DataTypes.STRING(20),
-    },
+    // Phone: {
+    //     type: DataTypes.STRING(20),
+    // },
     PasswordSalt: {
         type: DataTypes.BLOB('long'),
     },
     PasswordHash: {
         type: DataTypes.BLOB('long'),
     },
-    TFAEnabled: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
-    },
-    TFASecretKey: {
-        type: DataTypes.TEXT,
-    },
-    TFATempSecretKey: {
-        type: DataTypes.TEXT,
-    },
-    TFADate: {
-        type: DataTypes.DATE,
-    },
+    // TFAEnabled: {
+    //     type: DataTypes.BOOLEAN,
+    //     allowNull: false,
+    //     defaultValue: false
+    // },
+    // TFASecretKey: {
+    //     type: DataTypes.TEXT,
+    // },
+    // TFATempSecretKey: {
+    //     type: DataTypes.TEXT,
+    // },
+    // TFADate: {
+    //     type: DataTypes.DATE,
+    // },
     ChangePwdNextLogin: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

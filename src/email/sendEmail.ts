@@ -36,7 +36,7 @@ export const sendEmail = async ({ to, subject, text, buttonName, link, showButto
 
     if (!to) throw Error('The email address has not been found')
 
-    const templatePath = path.join(__dirname, "../../templates/emailTemplate.html");
+    const templatePath = path.join(__dirname, "../templates/emailTemplate.html");
     const source = fs.readFileSync(templatePath, 'utf-8').toString();
 
     const template = Handlebars.compile(source);

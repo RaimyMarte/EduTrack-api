@@ -11,7 +11,7 @@ export const userOptions = {
         },
 
         getUserDisplayName('UserCreatedBy'),
-        getUserDisplayName('UserLastModifiedBy'),
+        getUserDisplayName('UserLastUpdatedBy'),
     ],
     attributes: [
         ...userAttributes,
