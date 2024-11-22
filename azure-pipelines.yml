@@ -1,0 +1,16 @@
+trigger:
+- master
+
+pool: rtiny_agent
+
+stages:
+- stage: Build
+  displayName: Build RTINY
+  jobs:  
+  - job: BuildUIX
+    displayName: Build DockerFile RTINY API
+    steps:
+    - script: docker build -t api:latest .
+    - script: docker tag api register.rtiny.org/api
+    - script: docker push register.rtiny.org/api
+    #- script: /usr/local/bin/kubectl --kubeconfig=/home/docker/local.yaml  rollout restart deployment api -n rtiny
