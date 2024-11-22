@@ -1,7 +1,9 @@
-import { sequelize } from "./database/db"
 import cors from 'cors';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 import express from "express";
+import { sequelize } from "./database/db";
+import { validateAPIKey } from "./middlewares";
+import { authRouter } from "./routers";
 
 dotenv.config()
 
@@ -10,7 +12,6 @@ const PORT: string | undefined = process.env.PORT;
 const app = express();
 
 app.use(cors())
-
 app.use(express.json())
 
 
@@ -27,6 +28,9 @@ async function authenticateDatabase(): Promise<void> {
 authenticateDatabase();
 
 app.use('/public', express.static('public'))
+
+app.use(validateAPIKey);
+app.use(authRouter);
 
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT}`)

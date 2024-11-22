@@ -2,13 +2,14 @@ import { DataTypes, } from "sequelize";
 import { sequelize } from "../../database/db";
 import { Model, ModelCtor } from "sequelize-typescript";
 import { userAssociations } from "../associations/userAssociations";
-import { getGenderName } from "../../utils";
+import { capitalizeFirstLetter, getGenderName } from "../../utils";
 
 export interface UserInstance extends Model {
     Id: string;
     FirstName: string;
     LastName: string;
     UserName: string | null;
+    FullName: string | null;
     Email: string;
     Phone: string | null;
     Gender: string | null;
@@ -46,6 +47,13 @@ export const User = sequelize.define<UserInstance>('User', {
     LastName: {
         type: DataTypes.STRING(128),
         allowNull: false,
+    },
+    FullName: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            const fullName: string = `${this.FirstName} ${this.LastName}`;
+            return capitalizeFirstLetter(fullName);
+        },
     },
     UserName: {
         type: DataTypes.STRING(50),

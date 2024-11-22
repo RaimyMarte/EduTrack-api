@@ -10,5 +10,5 @@ export interface GetUserDisplayName {
 export const getUserDisplayName = (as: string): GetUserDisplayName => ({
     model: User,
     as,
-    attributes: ['DisplayName'],
+    attributes: ['FirstName', 'LastName', 'FullName'],
 });
