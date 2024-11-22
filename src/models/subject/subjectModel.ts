@@ -7,6 +7,7 @@ export interface SubjectInstance extends Model {
     Code: string | null;
     Name: string;
     Description: string | null;
+    ProfessorId: string | null
     Enabled: boolean;
     StatusId: number;
     StartDate: Date;
@@ -32,6 +33,9 @@ export const Subject = sequelize.define<SubjectInstance>('Subject', {
     },
     Description: {
         type: DataTypes.TEXT,
+    },
+    ProfessorId: {
+        type: DataTypes.STRING(450),
     },
     Enabled: {
         type: DataTypes.BOOLEAN,

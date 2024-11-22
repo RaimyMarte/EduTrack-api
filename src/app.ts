@@ -1,7 +1,7 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from "express";
-import { sequelize } from "./database/db";
+import { authenticateDatabase } from "./database/db";
 import { validateAPIKey } from "./middlewares";
 import { authRouter, maintenanceRouter, studentRouter, subjectRouter, userRouter } from "./routers";
 
@@ -16,15 +16,6 @@ app.use(express.json())
 
 
 // Sync the models with the database
-async function authenticateDatabase(): Promise<void> {
-  try {
-    await sequelize.authenticate();
-    console.log('Connection has been established successfully.');
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
-  }
-}
-
 authenticateDatabase();
 
 app.use('/public', express.static('public'))

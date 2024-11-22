@@ -44,6 +44,7 @@
     "sequelize-typescript": "^2.1.5",
     "speakeasy": "^2.0.0",
     "uid": "^2.0.2",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "tedious": "^18.2.1"
   }
 }

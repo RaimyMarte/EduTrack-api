@@ -28,9 +28,6 @@ export const defineMaintenanceModel = (tableName: string, extraParameters?: any)
         allowNull: false,
         defaultValue: false,
     },
-    OrderBy: {
-        type: DataTypes.INTEGER,
-    },
     CreatedBy: {
         type: DataTypes.STRING(450),
     },

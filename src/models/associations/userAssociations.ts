@@ -10,10 +10,12 @@ export const userAssociations = (User: ModelCtor<UserInstance>) => {
     User.belongsTo(UserRole, { foreignKey: 'UserRoleId', as: 'UserRole' });
     User.belongsTo(User, { foreignKey: 'CreatedBy', as: 'UserCreatedBy' });
     User.belongsTo(User, { foreignKey: 'LastUpdatedBy', as: 'UserLastUpdatedBy' });
+    
 
     Student.belongsTo(User, { foreignKey: 'CreatedBy', as: 'StudentCreatedBy' });
     Student.belongsTo(User, { foreignKey: 'LastUpdatedBy', as: 'StudentLastUpdatedBy' });
 
+    Subject.belongsTo(User, { foreignKey: 'ProfessorId', as: 'Professor' });
     Subject.belongsTo(User, { foreignKey: 'CreatedBy', as: 'SubjectCreatedBy' });
     Subject.belongsTo(User, { foreignKey: 'LastUpdatedBy', as: 'SubjectLastUpdatedBy' });
 
