@@ -57,7 +57,7 @@ export const getSubjectAttendance = async (req: Request, res: Response): Promise
 
 
 
-export const recordStudentAbsences = async (req: Request, res: Response): Promise<void> => {
+export const saveStudentAbsences = async (req: Request, res: Response): Promise<void> => {
     const { Students = [], SubjectId, Date }: { Students: string[], SubjectId: string, Date: string } = req.body
 
     try {
