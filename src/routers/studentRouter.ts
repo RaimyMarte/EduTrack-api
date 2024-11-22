@@ -7,8 +7,8 @@ import { addStudentsToSubject, getStudentsInSubject, getStudentsNotEnrolled, rem
 export const studentRouter = Router()
 
 studentRouter.get('/student_get_all', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), studentGetAllWithPagination)
-studentRouter.get('/student_dropdown', isAuthenticated, getStudentsDropdown)
-studentRouter.get('/student_by_id/:id', isAuthenticated, getStudentById)
+studentRouter.get('/student_dropdown', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsDropdown)
+studentRouter.get('/student_by_id/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentById)
 studentRouter.post('/create_student/', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), createStudent)
 studentRouter.patch('/update_student/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), updateStudent)
 
@@ -23,8 +23,8 @@ studentRouter.post('/upload_student_picture/:studentId',
     uploadStudentPicture,
 )
 
-studentRouter.get('/students_in_subject/:id', isAuthenticated, getStudentsInSubject)
-studentRouter.get('/students_out_subject/:id', isAuthenticated, getStudentsNotEnrolled)
+studentRouter.get('/students_in_subject/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsInSubject)
+studentRouter.get('/students_out_subject/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsNotEnrolled)
 studentRouter.post('/add_students_subject/', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), addStudentsToSubject)
 studentRouter.post('/remove_students_subject/', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), removeStudentsFromSubject)
 
