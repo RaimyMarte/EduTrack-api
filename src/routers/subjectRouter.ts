@@ -10,6 +10,6 @@ subjectRouter.get('/subject_get_all', isAuthenticated, checkPrivilege({ required
 subjectRouter.post('/create_subject/', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), createsubject)
 subjectRouter.patch('/update_subject/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), updatesubject)
 
-subjectRouter.get('/subject_get_all', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getSubjectAttendance)
+subjectRouter.get('/subject_get_attendance/:subjectId', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getSubjectAttendance)
 subjectRouter.post('/save_student_absences/', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), saveStudentAbsences)
 subjectRouter.post('/update_student_attendance/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), updateStudentAttendance)
