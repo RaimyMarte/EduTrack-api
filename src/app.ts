@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import express from "express";
 import { sequelize } from "./database/db";
 import { validateAPIKey } from "./middlewares";
-import { authRouter } from "./routers";
+import { authRouter, maintenanceRouter, userRouter } from "./routers";
 
 dotenv.config()
 
@@ -31,6 +31,8 @@ app.use('/public', express.static('public'))
 
 app.use(validateAPIKey);
 app.use(authRouter);
+app.use(maintenanceRouter)
+app.use(userRouter);
 
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT}`)
