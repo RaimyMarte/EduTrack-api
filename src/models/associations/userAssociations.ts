@@ -17,7 +17,6 @@ export const userAssociations = (User: ModelCtor<UserInstance>) => {
     Subject.belongsTo(User, { foreignKey: 'CreatedBy', as: 'SubjectCreatedBy' });
     Subject.belongsTo(User, { foreignKey: 'LastUpdatedBy', as: 'SubjectLastUpdatedBy' });
 
-
     Nationality.belongsTo(User, { foreignKey: 'CreatedBy', as: 'NationalityCreatedBy' });
     Nationality.belongsTo(User, { foreignKey: 'LastUpdatedBy', as: 'NationalityLastUpdatedBy' });
 
