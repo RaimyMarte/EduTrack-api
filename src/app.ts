@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import express from "express";
 import { sequelize } from "./database/db";
 import { validateAPIKey } from "./middlewares";
-import { authRouter, maintenanceRouter, userRouter } from "./routers";
+import { authRouter, maintenanceRouter, studentRouter, subjectRouter, userRouter } from "./routers";
 
 dotenv.config()
 
@@ -32,6 +32,8 @@ app.use('/public', express.static('public'))
 app.use(validateAPIKey);
 app.use(authRouter);
 app.use(maintenanceRouter)
+app.use(studentRouter);
+app.use(subjectRouter)
 app.use(userRouter);
 
 app.listen(PORT, () =>
