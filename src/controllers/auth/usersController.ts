@@ -4,14 +4,13 @@ import { uid } from "uid";
 import { v4 as uuidv4 } from 'uuid';
 import { sequelize } from "../../database/db";
 import { sendEmail } from "../../email/sendEmail";
-import { User, UserHistory, UserPaswordHistory, } from "../../models/authentication";
-import { UserRole } from "../../models/maintenance";
-import { userOptions } from "../../options/user/userOptions";
 import { encryptPassword, validatePassword } from "../../methods/password";
+import { getAllHandler, getByIdHandler, paginationSearchHandler, } from "../../methods/request";
+import { User, UserHistory, UserPaswordHistory, } from "../../models/authentication";
+import { userOptions } from "../../options/user/userOptions";
 import { successResponse } from "../../response";
 import { capitalizeFirstLetter, convertReqBody, handleUnknownError } from "../../utils";
 import { deleteFile, uploadFiles } from "../files";
-import { getAllHandler, getByIdHandler, paginationSearchHandler, } from "../../methods/request";
 
 const frontEndBaseUrl: string = process.env.FRONTEND_BASE_URL || ''
 const apiBaseUrl: string = process.env.API_BASE_URL || ''
@@ -44,7 +43,6 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
         { DisplayName: { [Op.like]: `%${search}%` } },
         { Email: { [Op.like]: `%${search}%` } },
         { Phone: { [Op.like]: `%${search}%` } },
-        sequelize.where(sequelize.fn('CONCAT', sequelize.col('UserProfile.FirstName'), ' ', sequelize.col('UserProfile.LastName')), 'LIKE', `%${search}%`),
         sequelize.where(sequelize.col('UserRole.Name'), 'LIKE', `%${search}%`),
     ]
 
@@ -60,23 +58,16 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
     })
 }
 
-export const getUsersForDropdown = async (_req: Request, res: Response): Promise<void> => {
+export const getProfessorsForDropdown = async (_req: Request, res: Response): Promise<void> => {
     getAllHandler({
         res,
         model: User,
         options: {
-            attributes: ['Id', 'DisplayName', 'Picture', 'UserRoleId'],
-            include: [{
-                model: UserRole,
-                as: 'UserRole',
-                attributes: ['Name'],
-            }],
-            order: [['DisplayName', 'DESC']],
+            attributes: ['Id', 'FullName', 'FirstName', 'LastName'],
+            order: [['FirstName', 'DESC']],
         },
         extraWhereConditions: {
-            UserRoleId: {
-                [Op.ne]: 1,
-            }
+            UserRoleId: 2
         },
     })
 }

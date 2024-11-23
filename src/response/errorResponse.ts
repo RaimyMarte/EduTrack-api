@@ -17,6 +17,7 @@ export const errorResponse = ({ title, message, }: { title?: string, message?: s
     response.data = null;
     response.isSuccess = false
     response.message = message ? message : defaultMessage
+    response.total = 0
 
     return {
         response

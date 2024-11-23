@@ -19,11 +19,12 @@ const response = new ClientResponse();
 const defaultTitle = 'Action performed.'
 const defaultMessage = "Request completed successfully."
 
-export const successResponse = ({ title, message, data = null }: successParameters): { response: successResponse } => {
+export const successResponse = ({ title, message, data = null, total }: successParameters): { response: successResponse } => {
     response.title = title ? title : defaultTitle
     response.data = data;
     response.isSuccess = true
     response.message = message ? message : defaultMessage
+    response.total = total || 0
 
     return {
         response

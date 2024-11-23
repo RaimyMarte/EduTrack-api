@@ -1,4 +1,5 @@
 import dotenv from 'dotenv'
+import { DataTypes } from 'sequelize'
 // import { DataTypes } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 dotenv.config()
@@ -22,11 +23,11 @@ export const sequelize = new Sequelize(dbName, dbUserName, dbPassword, {
   logging: false,
 });
 
-// DataTypes.DATE.prototype._stringify = function _stringify(date: any, options: any) {
-//   date = this._applyTimezone(date, options);
+DataTypes.DATE.prototype._stringify = function _stringify(date: any, options: any) {
+  date = this._applyTimezone(date, options);
 
-//   return date.format('YYYY-MM-DD HH:mm:ss.SSS');
-// };
+  return date.format('YYYY-MM-DD HH:mm:ss.SSS');
+};
 
 export async function authenticateDatabase(): Promise<void> {
   try {

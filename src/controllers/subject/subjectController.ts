@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import { Op } from "sequelize"
-import { createHandler, paginationSearchHandler, updateByIdHandler } from "../../methods/request"
+import { createHandler, deleteByIdHandler, paginationSearchHandler, updateByIdHandler } from "../../methods/request"
 import { Subject } from "../../models/subject"
 import { subjectOptions } from "../../options/subject/subjectOptions"
 
@@ -28,3 +28,5 @@ export const subjectGetAllWithPagination = async (req: Request, res: Response): 
 export const createsubject = async (req: Request, res: Response): Promise<void> => await createHandler({ req, res, model: Subject, idType: 'uuid' })
 
 export const updatesubject = async (req: Request, res: Response): Promise<void> => await updateByIdHandler({ req, res, model: Subject })
+
+export const deleteSubject = async (req: Request, res: Response): Promise<void> => await deleteByIdHandler({ req, res, model: Subject })
