@@ -35,13 +35,15 @@ export const paginationSearchHandler = async ({ req, res, model, options, search
         const currentPage = parseInt(page as string);
         const offset = (currentPage - 1) * limit;
 
+        const where = {
+            ...extraWhereConditions,
+            ...whereCondition,
+        };
+
         const { count: total, rows: data } = await model.findAndCountAll({
             distinct: true,
             col: 'Id', 
-            where: {
-                ...extraWhereConditions,
-                ...whereCondition,
-            },
+            where,
             ...options,
             offset,
             limit,

@@ -16,42 +16,14 @@ interface StudentFilterOptions {
     firstName?: string;
     lastName?: string;
     gender?: string;
-    minAge?: number;
-    maxAge?: number;
     nationalityId?: number;
-    createdBefore?: Date;
-    createdAfter?: Date;
     code?: string
-    phone?: string
+    phoneNumber?: string
     emailAddress?: string
+    parentName?: string
 }
 
-const calculateDateOfBirthRange = (minAge?: number, maxAge?: number): Record<string, Date> | undefined => {
-    const today = new Date();
-    const dateRange: Record<symbol, Date> = {};
-
-    if (minAge !== undefined) {
-        const maxDateOfBirth = new Date(
-            today.getFullYear() - minAge,
-            today.getMonth(),
-            today.getDate()
-        );
-        dateRange[Op.lte] = maxDateOfBirth;
-    }
-
-    if (maxAge !== undefined) {
-        const minDateOfBirth = new Date(
-            today.getFullYear() - maxAge - 1,
-            today.getMonth(),
-            today.getDate()
-        );
-        dateRange[Op.gte] = minDateOfBirth;
-    }
-
-    return Object.keys(dateRange).length ? dateRange : undefined;
-};
-
-export const filterStudents = async (filters: StudentFilterOptions) => {
+const filterStudents = (filters: StudentFilterOptions) => {
     const whereClause: Record<string, any> = {};
 
     if (filters?.firstName) {
@@ -66,12 +38,16 @@ export const filterStudents = async (filters: StudentFilterOptions) => {
         whereClause.Code = { [Op.like]: `%${filters?.code}%` };
     }
 
-    if (filters?.phone) {
-        whereClause.PhoneNumber = { [Op.like]: `%${filters?.phone}%` };
+    if (filters?.phoneNumber) {
+        whereClause.PhoneNumber = { [Op.like]: `%${filters?.phoneNumber}%` };
     }
 
     if (filters?.emailAddress) {
         whereClause.EmailAddress = { [Op.like]: `%${filters?.emailAddress}%` };
+    }
+
+    if (filters?.parentName) {
+        whereClause.ParentName = { [Op.like]: `%${filters?.parentName}%` };
     }
 
     if (filters?.gender) {
@@ -80,21 +56,6 @@ export const filterStudents = async (filters: StudentFilterOptions) => {
 
     if (filters?.nationalityId !== undefined) {
         whereClause.NationalityId = filters?.nationalityId;
-    }
-
-    if (filters?.createdBefore || filters?.createdAfter) {
-        whereClause.CreatedDate = {};
-        if (filters?.createdBefore) {
-            whereClause.CreatedDate[Op.lte] = filters?.createdBefore;
-        }
-        if (filters?.createdAfter) {
-            whereClause.CreatedDate[Op.gte] = filters?.createdAfter;
-        }
-    }
-
-    const dateOfBirthRange = calculateDateOfBirthRange(filters?.minAge, filters?.maxAge);
-    if (dateOfBirthRange) {
-        whereClause.DateOfBirth = dateOfBirthRange;
     }
 
     return whereClause;
@@ -106,15 +67,12 @@ export const studentGetAllWithPagination = async (req: Request, res: Response): 
         firstName,
         lastName,
         gender,
-        minAge,
-        maxAge,
-        createdBefore,
-        createdAfter,
+        nationalityId,
         code,
-        phone,
+        phoneNumber,
         emailAddress,
+        parentName,
     } = req.query as Partial<StudentFilterOptions & { search: string }>;
-
 
     const searchParameters = [
         { FirstName: { [Op.like]: `%${search}%` } },
@@ -122,20 +80,18 @@ export const studentGetAllWithPagination = async (req: Request, res: Response): 
         { EmailAddress: { [Op.like]: `%${search}%` } },
         { PhoneNumber: { [Op.like]: `%${search}%` } },
         { Code: { [Op.like]: `%${search}%` } },
-    ]
+    ];
 
     const extraWhereConditions = filterStudents({
         firstName,
         lastName,
         gender,
-        minAge,
-        maxAge,
-        createdBefore,
-        createdAfter,
+        nationalityId,
         code,
-        phone,
+        phoneNumber,
         emailAddress,
-    })
+        parentName,
+    });
 
     await paginationSearchHandler({
         req,
@@ -147,8 +103,8 @@ export const studentGetAllWithPagination = async (req: Request, res: Response): 
             ...studentOptions,
             order: [['CreatedDate', 'DESC']],
         },
-    })
-}
+    });
+};
 
 export const getStudentById = async (req: Request, res: Response): Promise<void> => await getByIdHandler({ req, res, model: Student, options: studentOptions })
 
