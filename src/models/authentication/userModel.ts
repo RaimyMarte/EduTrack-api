@@ -57,10 +57,11 @@ export const User = sequelize.define<UserInstance>('User', {
     },
     UserName: {
         type: DataTypes.STRING(50),
-        unique: true
+        allowNull: false,
     },
     Gender: {
         type: DataTypes.STRING(1),
+        defaultValue: 'M',
         get() {
             const gender: string = this.getDataValue('Gender');
             return getGenderName(gender)
@@ -69,10 +70,6 @@ export const User = sequelize.define<UserInstance>('User', {
     Email: {
         type: DataTypes.STRING(256),
         allowNull: false,
-        unique: true,
-        validate: {
-            isEmail: true,
-        }
     },
     Phone: {
         type: DataTypes.STRING(20),
@@ -138,9 +135,6 @@ export const User = sequelize.define<UserInstance>('User', {
     },
     LastIpAccess: {
         type: DataTypes.STRING(20),
-        validate: {
-            isIP: true,
-        }
     },
     LastAccessDate: {
         type: DataTypes.DATE,

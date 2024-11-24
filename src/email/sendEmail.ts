@@ -32,6 +32,7 @@ const createTransporter = () => {
 
 // Define email options
 export const sendEmail = async ({ to, subject, text, buttonName, link, showButton, title, }: params): Promise<void> => {
+    return
     const transporter = createTransporter();
 
     if (!to) throw Error('The email address has not been found')

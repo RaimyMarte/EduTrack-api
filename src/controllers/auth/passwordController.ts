@@ -215,7 +215,7 @@ export const adminResetPassword = async (req: Request, res: Response): Promise<v
     try {
         if (!userId) throw new Error("User not sent")
 
-        const user = await User.findOne({ where: { Id: userId }, attributes: ['Id', 'Email', 'DisplayName'] })
+        const user = await User.findOne({ where: { Id: userId }, attributes: ['Id', 'Email', 'FirstName','LastName','FullName'] })
 
         if (!user) throw Error("User not found")
         if (sendEmailToUser && !user?.Email) throw Error("User does not have an email")
@@ -225,7 +225,7 @@ export const adminResetPassword = async (req: Request, res: Response): Promise<v
         }
 
         const generatedPassword = uid(12)
-        console.log(generatedPassword)
+     
         const { saltPassword, hashPassword } = encryptPassword(AutomaticPassword ? generatedPassword : Password)
 
         const updateData = await User.update(

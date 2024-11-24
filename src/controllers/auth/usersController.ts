@@ -9,7 +9,7 @@ import { getAllHandler, getByIdHandler, paginationSearchHandler, } from "../../m
 import { User, UserHistory, UserPaswordHistory, } from "../../models/authentication";
 import { userOptions } from "../../options/user/userOptions";
 import { successResponse } from "../../response";
-import { capitalizeFirstLetter, convertReqBody, handleUnknownError } from "../../utils";
+import { convertReqBody, handleUnknownError } from "../../utils";
 import { deleteFile, uploadFiles } from "../files";
 
 const frontEndBaseUrl: string = process.env.FRONTEND_BASE_URL || ''
@@ -24,6 +24,7 @@ interface CreateUserBody {
     AutomaticPassword: boolean
     Password: string
     ConfirmPassword: string
+    UserName: string
     UserRoleId: number
 }
 
@@ -39,8 +40,8 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
     const { search } = req.query;
 
     const searchParameters = [
+        sequelize.where(sequelize.fn('CONCAT', sequelize.col('FirstName'), ' ', sequelize.col('LastName')), 'LIKE', `%${search}%`),
         { UserName: { [Op.like]: `%${search}%` } },
-        { DisplayName: { [Op.like]: `%${search}%` } },
         { Email: { [Op.like]: `%${search}%` } },
         { Phone: { [Op.like]: `%${search}%` } },
         sequelize.where(sequelize.col('UserRole.Name'), 'LIKE', `%${search}%`),
@@ -75,16 +76,33 @@ export const getProfessorsForDropdown = async (_req: Request, res: Response): Pr
 export const getUserById = async (req: Request, res: Response): Promise<void> => getByIdHandler({ req, res, model: User, options: userOptions })
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
-    const { FirstName, LastName, Email, AutomaticPassword, ChangePwdNextLogin, Password, ConfirmPassword, }: CreateUserBody = req.body;
+    const { FirstName, LastName, Email, AutomaticPassword, UserName, ChangePwdNextLogin, Password, ConfirmPassword, }: CreateUserBody = req.body;
     const { userToken } = req
 
     const createBody = convertReqBody(req.body);
 
     try {
         if (!Email) throw Error('Email is required')
+        if (!UserName) throw Error('UserName is required')
+
+        const userNameExists = await User.findOne({
+            where: { UserName: UserName.toLowerCase().trim() },
+            attributes: ['Id']
+        });
+
+        if (userNameExists)
+            throw Error(`User Name ${UserName} already exist`);
+
+
+        const emailExists = await User.findOne({
+            where: { Email: Email.toLowerCase().trim() },
+            attributes: ['Id']
+        });
+
+        if (emailExists)
+            throw Error(`Email Address ${Email} already exist`);
 
         const formattedEmail: string = Email.toLowerCase().trim()
-        const formattedDisplayName: string = capitalizeFirstLetter(`${FirstName} ${LastName}`)
 
         if (!AutomaticPassword) validatePassword(Password, ConfirmPassword)
 
@@ -95,7 +113,6 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
             ...createBody,
             ChangePwdNextLogin: ChangePwdNextLogin ? true : AutomaticPassword ? true : false,
             CreatedBy: userToken?.UserId,
-            DisplayName: formattedDisplayName,
             Email: formattedEmail,
             Id: uuidv4(),
             PasswordHash: hashPassword,
@@ -145,7 +162,7 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
     try {
         if (!UserId) throw Error('User was not sent')
 
-        const findUser = await User.findOne({ where: { Id: UserId }, attributes: ['Id', 'DisplayName'] })
+        const findUser = await User.findOne({ where: { Id: UserId }, attributes: ['Id'] })
         if (!findUser) throw Error('User was not found')
 
         const formattedEmail: string = Email.toLowerCase().trim()
