@@ -1,8 +1,8 @@
 import { Router } from "express";
 import fileUpload from "express-fileupload";
 import { createStudent, deleteStudent, getStudentById, getStudentsDropdown, studentGetAllWithPagination, updateStudent, uploadStudentPicture } from "../controllers/student/studentController";
+import { getStudentsInSubject, getStudentsNotEnrolled, saveSubjectEnrollment } from "../controllers/student/studentSubjectController";
 import { checkPrivilege, fileExtLimiter, fileSizeLimiter, filesPayloadExists, isAuthenticated } from "../middlewares";
-import { addStudentsToSubject, getStudentsInSubject, getStudentsNotEnrolled, removeStudentsFromSubject } from "../controllers/student/studentSubjectController";
 
 export const studentRouter = Router()
 
@@ -24,10 +24,9 @@ studentRouter.post('/upload_student_picture/:studentId',
     uploadStudentPicture,
 )
 
-studentRouter.get('/students_in_subject/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsInSubject)
-studentRouter.get('/students_out_subject/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsNotEnrolled)
-studentRouter.post('/add_students_subject/', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), addStudentsToSubject)
-studentRouter.post('/remove_students_subject/', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), removeStudentsFromSubject)
+studentRouter.get('/students_in_subject/:subjectId', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsInSubject)
+studentRouter.get('/students_out_subject/:subjectId', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsNotEnrolled)
+studentRouter.post('/save_subject_enrollment/', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), saveSubjectEnrollment)
 
 
 

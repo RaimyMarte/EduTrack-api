@@ -7,7 +7,7 @@ import { studentSubjectOptions } from "../../options/student/studentSubjectOptio
 import { studentSmallAttributes } from "../../options/student/attributes/studentSmallAttributes"
 
 
-export const getEnrolledStudents = async (subjectId: string) => {
+const getEnrolledStudents = async (subjectId: string) => {
     const enrolledStudents = await StudentSubjectCross.findAll({
         where: {
             SubjectId: subjectId,
@@ -25,9 +25,10 @@ export const getStudentsInSubject = async (req: Request, res: Response): Promise
     try {
         if (!subjectId) throw new Error('Subject is required');
 
-        const enrolledStudents = getEnrolledStudents(subjectId)
+        const enrolledStudents: any = await getEnrolledStudents(subjectId)
+        const data = enrolledStudents?.map((item: any) => item?.Student)
 
-        const { response } = successResponse({ data: enrolledStudents });
+        const { response } = successResponse({ data });
         res.json(response);
     } catch (error: unknown) {
         handleUnknownError({ error, res });
@@ -54,17 +55,15 @@ export const getStudentsNotEnrolled = async (req: Request, res: Response): Promi
     }
 };
 
-
-
-export const addStudentsToSubject = async (req: Request, res: Response): Promise<void> => {
+export const saveSubjectEnrollment = async (req: Request, res: Response): Promise<void> => {
     const { user } = req
-    const { Students = [], SubjectId, }: { Students: string[], SubjectId: string, } = req.body
+    const { EnrollStudents = [], NotEnrollStudents = [], SubjectId, }: { EnrollStudents: string[], NotEnrollStudents: string[], SubjectId: string, } = req.body
 
     try {
-        if (!Students || (Array.isArray(Students) && Students.length < 1)) throw new Error('You need to select at least one student')
+
         if (!SubjectId) throw new Error('Subject is required')
 
-        const studentsData = await Promise.all(Students.map(async (studentId) => {
+        const enrollStudentsData = await Promise.all(EnrollStudents.map(async (studentId) => {
             const findStudentSubjectCross = await StudentSubjectCross.findOne({
                 where: {
                     SubjectId,
@@ -72,7 +71,8 @@ export const addStudentsToSubject = async (req: Request, res: Response): Promise
                 }
             })
 
-            if (findStudentSubjectCross) throw new Error('Student is already in this section')
+            if (findStudentSubjectCross)
+                return
 
             return {
                 SubjectId,
@@ -82,23 +82,11 @@ export const addStudentsToSubject = async (req: Request, res: Response): Promise
             }
         }));
 
-        const data = await StudentSubjectCross.bulkCreate(studentsData);
+        const validEnrollStudentsData = enrollStudentsData.filter((data) => data !== undefined);
 
-        const { response } = successResponse({ data, message: 'Students added successfully' })
-        res.json(response);
-    } catch (error: unknown) {
-        handleUnknownError({ error, res, })
-    }
-}
+        await StudentSubjectCross.bulkCreate(validEnrollStudentsData);
 
-export const removeStudentsFromSubject = async (req: Request, res: Response): Promise<void> => {
-    const { Students = [], SubjectId, }: { Students: string[], SubjectId: string, } = req.body
-
-    try {
-        if (!Students || (Array.isArray(Students) && Students.length < 1)) throw new Error('You need to select at least one student')
-        if (!SubjectId) throw new Error('Subject is required')
-
-        Students.forEach(async (studentId) => {
+        NotEnrollStudents.forEach(async (studentId) => {
             await StudentSubjectCross.destroy({
                 where: {
                     SubjectId,
@@ -107,7 +95,7 @@ export const removeStudentsFromSubject = async (req: Request, res: Response): Pr
             })
         })
 
-        const { response } = successResponse({ message: 'Students removed successfully' })
+        const { response } = successResponse({ message: 'Students enrollment updated successfully' })
         res.json(response);
     } catch (error: unknown) {
         handleUnknownError({ error, res, })

@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { checkPrivilege, isAuthenticated } from "../middlewares";
-import { createsubject, deleteSubject, subjectGetAllWithPagination, updatesubject } from "../controllers/subject/subjectController";
+import { createsubject, deleteSubject, getSubjectById, subjectGetAllWithPagination, updatesubject } from "../controllers/subject/subjectController";
 import { getSubjectAttendance, saveStudentAbsences, updateStudentAttendance } from "../controllers/subject/subjectAttendanceController";
 
 
 export const subjectRouter = Router()
 
 subjectRouter.get('/subject_get_all', isAuthenticated, checkPrivilege({ requiredUserRole: 2 }), subjectGetAllWithPagination)
+subjectRouter.get('/get_subject/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getSubjectById)
 subjectRouter.post('/create_subject/', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), createsubject)
 subjectRouter.patch('/update_subject/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), updatesubject)
 subjectRouter.delete('/delete_subject/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), deleteSubject)
