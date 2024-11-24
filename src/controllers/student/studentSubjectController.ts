@@ -5,14 +5,20 @@ import { successResponse } from "../../response"
 import { handleUnknownError } from "../../utils"
 import { studentSubjectOptions } from "../../options/student/studentSubjectOptions"
 import { studentSmallAttributes } from "../../options/student/attributes/studentSmallAttributes"
+import { Order } from "sequelize"
 
+const studentOrder: Order = [
+    [{ model: Student, as: 'Student' }, 'FirstName', 'ASC'],
+    [{ model: Student, as: 'Student' }, 'LastName', 'ASC'],
+]
 
 const getEnrolledStudents = async (subjectId: string) => {
     const enrolledStudents = await StudentSubjectCross.findAll({
         where: {
             SubjectId: subjectId,
         },
-        ...studentSubjectOptions
+        ...studentSubjectOptions,
+        order: studentOrder
     });
 
     return enrolledStudents;
@@ -41,7 +47,13 @@ export const getStudentsNotEnrolled = async (req: Request, res: Response): Promi
     try {
         if (!subjectId) throw new Error('Subject is required');
 
-        const allStudents = await Student.findAll({ attributes: studentSmallAttributes });
+        const allStudents = await Student.findAll({
+            attributes: studentSmallAttributes,
+            order: [
+                ['FirstName', 'ASC'],
+                ['LastName', 'ASC']
+            ],
+        });
 
         const enrolledStudents = await getEnrolledStudents(subjectId);
         const enrolledStudensIds = enrolledStudents.map((entry) => entry?.StudentId)
