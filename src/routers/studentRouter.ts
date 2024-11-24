@@ -23,8 +23,8 @@ studentRouter.post('/upload_student_picture/:studentId',
     uploadStudentPicture,
 )
 
-studentRouter.get('/students_in_subject/:subjectId', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsInSubject)
-studentRouter.get('/students_out_subject/:subjectId', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsNotEnrolled)
-studentRouter.get('/students_in_subject_with_grades/:subjectId', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsInSubjectWithGrades)
+studentRouter.get('/students_in_subject/:subjectId', isAuthenticated, checkPrivilege({ requiredUserRole: 2 }), getStudentsInSubject)
+studentRouter.get('/students_out_subject/:subjectId', isAuthenticated, checkPrivilege({ requiredUserRole: 2 }), getStudentsNotEnrolled)
+studentRouter.get('/students_in_subject_with_grades/:subjectId', isAuthenticated, checkPrivilege({ requiredUserRole: 2}), getStudentsInSubjectWithGrades)
 studentRouter.post('/save_subject_enrollment/', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), saveSubjectEnrollment)
 studentRouter.post('/save_students_grades/', isAuthenticated, checkPrivilege({ requiredUserRole: 2 }), saveStudentsGrades)
