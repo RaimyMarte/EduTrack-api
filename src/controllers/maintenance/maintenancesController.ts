@@ -6,9 +6,17 @@ import { handleUnknownError } from "../../utils";
 
 
 export const getAllInSelectedMaintenances = async (req: Request, res: Response): Promise<void> => {
-    const { selectedMaintenances, }: { selectedMaintenances: string[], } = req.body
+    const { selectedMaintenances } = req.query
     try {
-        const data = await Promise.all(selectedMaintenances.map(async (modelName: string) => {
+        const selectedMaintenancesArray = selectedMaintenances
+            ? (selectedMaintenances as string).split(',')
+            : [];
+
+        if (!selectedMaintenancesArray.length) {
+            throw new Error('selectedMaintenances is required');
+        }
+
+        const data = await Promise.all(selectedMaintenancesArray.map(async (modelName: string) => {
             const model: ModelCtor<any> = maintenancesModels[modelName]
 
             if (!model) throw Error(`${modelName} was not found`);

@@ -21,6 +21,9 @@ interface StudentFilterOptions {
     nationalityId?: number;
     createdBefore?: Date;
     createdAfter?: Date;
+    code?: string
+    phone?: string
+    emailAddress?: string
 }
 
 const calculateDateOfBirthRange = (minAge?: number, maxAge?: number): Record<string, Date> | undefined => {
@@ -59,6 +62,18 @@ export const filterStudents = async (filters: StudentFilterOptions) => {
         whereClause.LastName = { [Op.like]: `%${filters?.lastName}%` };
     }
 
+    if (filters?.code) {
+        whereClause.Code = { [Op.like]: `%${filters?.code}%` };
+    }
+
+    if (filters?.phone) {
+        whereClause.PhoneNumber = { [Op.like]: `%${filters?.phone}%` };
+    }
+
+    if (filters?.emailAddress) {
+        whereClause.EmailAddress = { [Op.like]: `%${filters?.emailAddress}%` };
+    }
+
     if (filters?.gender) {
         whereClause.Gender = filters?.gender;
     }
@@ -95,6 +110,9 @@ export const studentGetAllWithPagination = async (req: Request, res: Response): 
         maxAge,
         createdBefore,
         createdAfter,
+        code,
+        phone,
+        emailAddress,
     } = req.query as Partial<StudentFilterOptions & { search: string }>;
 
 
@@ -114,6 +132,9 @@ export const studentGetAllWithPagination = async (req: Request, res: Response): 
         maxAge,
         createdBefore,
         createdAfter,
+        code,
+        phone,
+        emailAddress,
     })
 
     await paginationSearchHandler({
