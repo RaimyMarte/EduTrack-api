@@ -1,7 +1,7 @@
 import { Router } from "express";
 import fileUpload from "express-fileupload";
 import { createStudent, deleteStudent, getStudentById, studentGetAllWithPagination, updateStudent, uploadStudentPicture } from "../controllers/student/studentController";
-import { getStudentsInSubject, getStudentsNotEnrolled, saveStudentsGrades, saveSubjectEnrollment } from "../controllers/student/studentSubjectController";
+import { getStudentsInSubject, getStudentsInSubjectWithGrades, getStudentsNotEnrolled, saveStudentsGrades, saveSubjectEnrollment } from "../controllers/student/studentSubjectController";
 import { checkPrivilege, fileExtLimiter, fileSizeLimiter, filesPayloadExists, isAuthenticated } from "../middlewares";
 
 export const studentRouter = Router()
@@ -25,5 +25,6 @@ studentRouter.post('/upload_student_picture/:studentId',
 
 studentRouter.get('/students_in_subject/:subjectId', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsInSubject)
 studentRouter.get('/students_out_subject/:subjectId', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsNotEnrolled)
+studentRouter.get('/students_in_subject_with_grades/:subjectId', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsInSubjectWithGrades)
 studentRouter.post('/save_subject_enrollment/', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), saveSubjectEnrollment)
 studentRouter.post('/save_students_grades/', isAuthenticated, checkPrivilege({ requiredUserRole: 2 }), saveStudentsGrades)

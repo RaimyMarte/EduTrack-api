@@ -115,20 +115,30 @@ export const saveSubjectEnrollment = async (req: Request, res: Response): Promis
     }
 }
 
-export const saveStudentsGrades = async (req: Request, res: Response): Promise<void> => {
-    const { user } = req
-    const { GradesMap = [], SubjectId, }: { GradesMap: { StudentId: string, Grade: number }[], SubjectId: string, } = req.body
+
+export const getStudentsInSubjectWithGrades = async (req: Request, res: Response): Promise<void> => {
+    const { subjectId } = req.params;
 
     try {
+        if (!subjectId) throw new Error('Subject is required');
+        const enrolledStudents: any = await getEnrolledStudents(subjectId)
 
-        if (!SubjectId)
-            throw new Error('Subject is required')
+        const { response } = successResponse({ data: enrolledStudents });
+        res.json(response);
+    } catch (error: unknown) {
+        handleUnknownError({ error, res });
+    }
+};
 
-        const data = await Promise.all(GradesMap.map(async ({ StudentId, Grade }) => {
+export const saveStudentsGrades = async (req: Request, res: Response): Promise<void> => {
+    const { user } = req
+    const { GradesMap = [] }: { GradesMap: { StudentSubjectCrossId: string, Grade: number }[] } = req.body
+
+    try {
+        const data = await Promise.all(GradesMap.map(async ({ StudentSubjectCrossId, Grade }) => {
             const studentSubjectCross: any = await StudentSubjectCross.findOne({
                 where: {
-                    SubjectId,
-                    StudentId: StudentId,
+                    Id: StudentSubjectCrossId
                 },
                 ...studentSubjectOptions
             })
@@ -143,12 +153,11 @@ export const saveStudentsGrades = async (req: Request, res: Response): Promise<v
                     LastGradeUpdatedBy: user?.Id,
                     LastGradeUpdatedDate: sequelize.literal('CURRENT_TIMESTAMP'),
                 },
-                { where: { Id: studentSubjectCross?.Id } }
+                { where: { Id: StudentSubjectCrossId } }
             );
 
             return studentSubjectCross
         }));
-
 
         const { response } = successResponse({ data, message: 'Students grades updated successfully' })
         res.json(response);

@@ -28,6 +28,22 @@ export const StudentSubjectCross = sequelize.define<StudentSubjectCrossInstance>
     Grade: {
         type: DataTypes.INTEGER,
     },
+    LetterGrade: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            const grade = this.getDataValue('Grade');
+            switch (true) {
+                case (grade >= 90 && grade <= 100):
+                    return 'A';
+                case (grade >= 80 && grade < 90):
+                    return 'B';
+                case (grade >= 70 && grade < 80):
+                    return 'C';
+                default:
+                    return 'F';
+            }
+        },
+    },
     CreatedBy: {
         type: DataTypes.STRING(450),
     },
