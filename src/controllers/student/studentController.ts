@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { Op } from "sequelize"
 import { sequelize } from "../../database/db"
-import { createHandler, getAllHandler, getByIdHandler, paginationSearchHandler, updateByIdHandler } from "../../methods/request"
+import { createHandler, deleteByIdHandler, getAllHandler, getByIdHandler, paginationSearchHandler, updateByIdHandler } from "../../methods/request"
 import { Student } from "../../models/student/studentModel"
 import { studentOptions } from "../../options/student/studentOptions"
 import { successResponse } from "../../response"
@@ -99,7 +99,8 @@ export const studentGetAllWithPagination = async (req: Request, res: Response): 
 
 
     const searchParameters = [
-        sequelize.where(sequelize.fn('CONCAT', sequelize.col('FirstName'), ' ', sequelize.col('LastName')), 'LIKE', `%${search}%`),
+        { FirstName: { [Op.like]: `%${search}%` } },
+        { LastName: { [Op.like]: `%${search}%` } },
         { EmailAddress: { [Op.like]: `%${search}%` } },
         { PhoneNumber: { [Op.like]: `%${search}%` } },
         { Code: { [Op.like]: `%${search}%` } },
@@ -151,6 +152,8 @@ export const getStudentById = async (req: Request, res: Response): Promise<void>
 export const createStudent = async (req: Request, res: Response): Promise<void> => await createHandler({ req, res, model: Student, idType: 'uuid' })
 
 export const updateStudent = async (req: Request, res: Response): Promise<void> => await updateByIdHandler({ req, res, model: Student })
+
+export const deleteStudent = async (req: Request, res: Response): Promise<void> => await deleteByIdHandler({ req, res, model: Student })
 
 export const uploadStudentPicture = async (req: Request, res: Response): Promise<void> => {
     try {

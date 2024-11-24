@@ -1,4 +1,5 @@
 import { User } from "../../models/authentication";
+import { getUserDisplayName } from "../../utils";
 
 export const subjectOptions = {
     include: [
@@ -11,5 +12,8 @@ export const subjectOptions = {
                 'LastName',
             ],
         },
+
+        getUserDisplayName('SubjectCreatedBy'),
+        getUserDisplayName('SubjectLastUpdatedBy'),
     ],
 }

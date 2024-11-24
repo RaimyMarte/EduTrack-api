@@ -19,7 +19,6 @@ export interface StudentInstance extends Model {
     ParentName: string | null;
     ParentPhoneNumber: string | null;
     Picture: string | null;
-    Carnet: string | null;
     CreatedBy: string | null;
     CreatedDate: Date;
     LastUpdatedBy: string | null;
@@ -68,6 +67,9 @@ export const Student = sequelize.define<StudentInstance>('Student', {
     },
     Gender: {
         type: DataTypes.STRING(1),
+    },
+    GenderName: {
+        type: DataTypes.VIRTUAL,
         get() {
             const gender = this.getDataValue('Gender');
             return getGenderName(gender)
@@ -86,9 +88,6 @@ export const Student = sequelize.define<StudentInstance>('Student', {
         type: DataTypes.STRING(20),
     },
     Picture: {
-        type: DataTypes.STRING(2086),
-    },
-    Carnet: {
         type: DataTypes.STRING(2086),
     },
     CreatedBy: {

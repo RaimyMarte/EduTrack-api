@@ -8,10 +8,11 @@ interface params {
     res: Response;
     req: Request,
     model: ModelCtor;
-    idType?:'number' | 'uuid';
+    idType?: 'number' | 'uuid';
 }
 export const createHandler = async ({ req, res, model, idType = 'number' }: params) => {
     const createBody = convertReqBody(req.body);
+    const { user } = req
 
     try {
         if (!model) throw Error('Model was not found')
@@ -19,7 +20,7 @@ export const createHandler = async ({ req, res, model, idType = 'number' }: para
         const modelData = await model.create({
             ...createBody,
             Id: idType === 'uuid' ? uuidv4() : undefined,
-            CreatedBy: req.userToken?.UserId
+            CreatedBy: user?.Id,
         });
 
         const { response } = successResponse({ data: modelData })

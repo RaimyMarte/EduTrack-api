@@ -1,6 +1,6 @@
 import { Router } from "express";
 import fileUpload from "express-fileupload";
-import { createStudent, getStudentById, getStudentsDropdown, studentGetAllWithPagination, updateStudent, uploadStudentPicture } from "../controllers/student/studentController";
+import { createStudent, deleteStudent, getStudentById, getStudentsDropdown, studentGetAllWithPagination, updateStudent, uploadStudentPicture } from "../controllers/student/studentController";
 import { checkPrivilege, fileExtLimiter, fileSizeLimiter, filesPayloadExists, isAuthenticated } from "../middlewares";
 import { addStudentsToSubject, getStudentsInSubject, getStudentsNotEnrolled, removeStudentsFromSubject } from "../controllers/student/studentSubjectController";
 
@@ -11,6 +11,7 @@ studentRouter.get('/student_dropdown', isAuthenticated, checkPrivilege({ require
 studentRouter.get('/student_by_id/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentById)
 studentRouter.post('/create_student/', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), createStudent)
 studentRouter.patch('/update_student/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), updateStudent)
+studentRouter.delete('/delete_student/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), deleteStudent)
 
 
 studentRouter.post('/upload_student_picture/:studentId',

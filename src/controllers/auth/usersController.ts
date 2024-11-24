@@ -40,7 +40,8 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
     const { search } = req.query;
 
     const searchParameters = [
-        sequelize.where(sequelize.fn('CONCAT', sequelize.col('FirstName'), ' ', sequelize.col('LastName')), 'LIKE', `%${search}%`),
+        { FirstName: { [Op.like]: `%${search}%` } },
+        { LastName: { [Op.like]: `%${search}%` } },
         { UserName: { [Op.like]: `%${search}%` } },
         { Email: { [Op.like]: `%${search}%` } },
         { Phone: { [Op.like]: `%${search}%` } },
