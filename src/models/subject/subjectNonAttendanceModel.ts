@@ -1,6 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { Model, ModelCtor } from 'sequelize-typescript';
 import { sequelize } from '../../database/db';
+import { StudentSubjectCross } from '../student';
 
 export interface SubjectNonAttendanceInstance extends Model {
     Id: number
@@ -10,9 +11,8 @@ export interface SubjectNonAttendanceInstance extends Model {
 
 export const SubjectNonAttendance = sequelize.define<SubjectNonAttendanceInstance>('SubjectNonAttendance', {
     Id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(450),
         primaryKey: true,
-        autoIncrement: true,
         allowNull: false,
     },
     StudentSubjectCrossId: {
@@ -29,3 +29,5 @@ export const SubjectNonAttendance = sequelize.define<SubjectNonAttendanceInstanc
     schema: 'dbo',
     timestamps: false,
 }) as ModelCtor<SubjectNonAttendanceInstance>
+
+SubjectNonAttendance.belongsTo(StudentSubjectCross, { foreignKey: 'StudentSubjectCrossId', as: 'StudentSubjectCross' });

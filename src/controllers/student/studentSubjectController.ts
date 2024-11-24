@@ -61,14 +61,16 @@ export const saveSubjectEnrollment = async (req: Request, res: Response): Promis
 
     try {
 
-        if (!SubjectId) throw new Error('Subject is required')
+        if (!SubjectId)
+            throw new Error('Subject is required')
 
         const enrollStudentsData = await Promise.all(EnrollStudents.map(async (studentId) => {
             const findStudentSubjectCross = await StudentSubjectCross.findOne({
                 where: {
                     SubjectId,
                     StudentId: studentId,
-                }
+                },
+                attributes: ['Id']
             })
 
             if (findStudentSubjectCross)
@@ -82,17 +84,15 @@ export const saveSubjectEnrollment = async (req: Request, res: Response): Promis
             }
         }));
 
-        const validEnrollStudentsData = enrollStudentsData.filter((data) => data !== undefined);
+        const validEnrollStudentsData = enrollStudentsData.filter((data): data is NonNullable<typeof data> => data !== undefined);
 
         await StudentSubjectCross.bulkCreate(validEnrollStudentsData);
 
-        NotEnrollStudents.forEach(async (studentId) => {
-            await StudentSubjectCross.destroy({
-                where: {
-                    SubjectId,
-                    StudentId: studentId,
-                }
-            })
+        await StudentSubjectCross.destroy({
+            where: {
+                SubjectId,
+                StudentId: NotEnrollStudents,
+            }
         })
 
         const { response } = successResponse({ message: 'Students enrollment updated successfully' })
