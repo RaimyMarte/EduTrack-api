@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { Op } from "sequelize"
 import { sequelize } from "../../database/db"
-import { createHandler, deleteByIdHandler, getAllHandler, getByIdHandler, paginationSearchHandler, updateByIdHandler } from "../../methods/request"
+import { createHandler, deleteByIdHandler, getByIdHandler, paginationSearchHandler, updateByIdHandler } from "../../methods/request"
 import { Student } from "../../models/student/studentModel"
 import { studentOptions } from "../../options/student/studentOptions"
 import { successResponse } from "../../response"
@@ -128,24 +128,6 @@ export const studentGetAllWithPagination = async (req: Request, res: Response): 
         },
     })
 }
-
-
-export const getStudentsDropdown = async (_req: Request, res: Response): Promise<void> => await getAllHandler({
-    res,
-    model: Student,
-    options: {
-        attributes: [
-            'Id',
-            'Code',
-            'FirstName',
-            'MiddleName',
-            'LastName',
-            'FullName',
-            'Picture',
-        ]
-    }
-})
-
 
 export const getStudentById = async (req: Request, res: Response): Promise<void> => await getByIdHandler({ req, res, model: Student, options: studentOptions })
 

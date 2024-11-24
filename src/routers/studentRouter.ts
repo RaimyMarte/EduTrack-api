@@ -1,13 +1,12 @@
 import { Router } from "express";
 import fileUpload from "express-fileupload";
-import { createStudent, deleteStudent, getStudentById, getStudentsDropdown, studentGetAllWithPagination, updateStudent, uploadStudentPicture } from "../controllers/student/studentController";
-import { getStudentsInSubject, getStudentsNotEnrolled, saveSubjectEnrollment } from "../controllers/student/studentSubjectController";
+import { createStudent, deleteStudent, getStudentById, studentGetAllWithPagination, updateStudent, uploadStudentPicture } from "../controllers/student/studentController";
+import { getStudentsInSubject, getStudentsNotEnrolled, saveStudentsGrades, saveSubjectEnrollment } from "../controllers/student/studentSubjectController";
 import { checkPrivilege, fileExtLimiter, fileSizeLimiter, filesPayloadExists, isAuthenticated } from "../middlewares";
 
 export const studentRouter = Router()
 
 studentRouter.get('/student_get_all', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), studentGetAllWithPagination)
-studentRouter.get('/student_dropdown', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsDropdown)
 studentRouter.get('/student_by_id/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentById)
 studentRouter.post('/create_student/', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), createStudent)
 studentRouter.patch('/update_student/:id', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), updateStudent)
@@ -27,7 +26,4 @@ studentRouter.post('/upload_student_picture/:studentId',
 studentRouter.get('/students_in_subject/:subjectId', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsInSubject)
 studentRouter.get('/students_out_subject/:subjectId', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), getStudentsNotEnrolled)
 studentRouter.post('/save_subject_enrollment/', isAuthenticated, checkPrivilege({ requiredUserRole: 1 }), saveSubjectEnrollment)
-
-
-
-
+studentRouter.post('/save_students_grades/', isAuthenticated, checkPrivilege({ requiredUserRole: 2 }), saveStudentsGrades)

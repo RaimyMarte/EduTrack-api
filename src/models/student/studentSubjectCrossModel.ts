@@ -36,6 +36,12 @@ export const StudentSubjectCross = sequelize.define<StudentSubjectCrossInstance>
         allowNull: false,
         defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
     },
+    LastGradeUpdatedBy: {
+        type: DataTypes.STRING(450),
+    },
+    LastGradeUpdatedDate: {
+        type: DataTypes.DATE,
+    },
 }, {
     tableName: 'StudentSubjectCross',
     schema: 'dbo',

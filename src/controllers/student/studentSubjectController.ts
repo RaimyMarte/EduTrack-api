@@ -6,6 +6,7 @@ import { handleUnknownError } from "../../utils"
 import { studentSubjectOptions } from "../../options/student/studentSubjectOptions"
 import { studentSmallAttributes } from "../../options/student/attributes/studentSmallAttributes"
 import { Order } from "sequelize"
+import { sequelize } from "../../database/db"
 
 const studentOrder: Order = [
     [{ model: Student, as: 'Student' }, 'FirstName', 'ASC'],
@@ -108,6 +109,48 @@ export const saveSubjectEnrollment = async (req: Request, res: Response): Promis
         })
 
         const { response } = successResponse({ message: 'Students enrollment updated successfully' })
+        res.json(response);
+    } catch (error: unknown) {
+        handleUnknownError({ error, res, })
+    }
+}
+
+export const saveStudentsGrades = async (req: Request, res: Response): Promise<void> => {
+    const { user } = req
+    const { GradesMap = [], SubjectId, }: { GradesMap: { StudentId: string, Grade: number }[], SubjectId: string, } = req.body
+
+    try {
+
+        if (!SubjectId)
+            throw new Error('Subject is required')
+
+        const data = await Promise.all(GradesMap.map(async ({ StudentId, Grade }) => {
+            const studentSubjectCross: any = await StudentSubjectCross.findOne({
+                where: {
+                    SubjectId,
+                    StudentId: StudentId,
+                },
+                ...studentSubjectOptions
+            })
+
+            if (!studentSubjectCross)
+                throw new Error(`Student ${studentSubjectCross?.Student?.FullName} is not on this subject`)
+
+
+            await StudentSubjectCross.update(
+                {
+                    Grade,
+                    LastGradeUpdatedBy: user?.Id,
+                    LastGradeUpdatedDate: sequelize.literal('CURRENT_TIMESTAMP'),
+                },
+                { where: { Id: studentSubjectCross?.Id } }
+            );
+
+            return studentSubjectCross
+        }));
+
+
+        const { response } = successResponse({ data, message: 'Students grades updated successfully' })
         res.json(response);
     } catch (error: unknown) {
         handleUnknownError({ error, res, })
