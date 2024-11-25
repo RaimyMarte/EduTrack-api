@@ -66,9 +66,7 @@ export const getProfessorStats = async (req: Request, res: Response): Promise<vo
             };
         }));
 
-        const data = {
-            subjectStats
-        };
+        const data = subjectStats
 
         const { response } = successResponse({ data });
         res.json(response);
