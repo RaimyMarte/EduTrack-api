@@ -3,6 +3,7 @@ import { Op } from "sequelize"
 import { createHandler, deleteByIdHandler, getByIdHandler, paginationSearchHandler, updateByIdHandler } from "../../methods/request"
 import { Subject } from "../../models/subject"
 import { subjectOptions } from "../../options/subject/subjectOptions"
+import { handleUnknownError } from "../../utils"
 
 
 export const subjectGetAllWithPagination = async (req: Request, res: Response): Promise<void> => {
@@ -34,15 +35,14 @@ export const subjectGetAllWithPagination = async (req: Request, res: Response): 
             model: Subject,
             searchParameters,
             extraWhereConditions,
-                options: {
+            options: {
                 ...subjectOptions,
                 order: [['CreatedDate', 'DESC']],
             },
         })
-    } catch (error) {
-
+    } catch (error: unknown) {
+        handleUnknownError({ error, res })
     }
-
 }
 
 
