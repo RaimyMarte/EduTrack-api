@@ -6,23 +6,43 @@ import { subjectOptions } from "../../options/subject/subjectOptions"
 
 
 export const subjectGetAllWithPagination = async (req: Request, res: Response): Promise<void> => {
-    const { search } = req.query;
+    try {
+        const { user, query } = req
+        const userRoleId = user?.UserRoleId
 
-    const searchParameters = [
-        { Name: { [Op.like]: `%${search}%` } },
-        { Code: { [Op.like]: `%${search}%` } },
-    ]
+        const isUserAdmin = userRoleId == 1
+        const isUserProfessor = userRoleId == 2
 
-    await paginationSearchHandler({
-        req,
-        res,
-        model: Subject,
-        searchParameters,
-        options: {
-            ...subjectOptions,
-            order: [['CreatedDate', 'DESC']],
-        },
-    })
+
+        const extraWhereConditions = isUserProfessor
+            ? { ProfessorId: user?.Id }
+            : {}
+
+        if (!isUserAdmin && !isUserProfessor)
+            throw new Error('You are not allow to do this');
+
+        const { search } = query;
+
+        const searchParameters = [
+            { Name: { [Op.like]: `%${search}%` } },
+            { Code: { [Op.like]: `%${search}%` } },
+        ]
+
+        await paginationSearchHandler({
+            req,
+            res,
+            model: Subject,
+            searchParameters,
+            extraWhereConditions,
+                options: {
+                ...subjectOptions,
+                order: [['CreatedDate', 'DESC']],
+            },
+        })
+    } catch (error) {
+
+    }
+
 }
 
 
