@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import express from "express";
 import { authenticateDatabase } from "./database/db";
 import { validateAPIKey } from "./middlewares";
-import { authRouter, maintenanceRouter, studentRouter, subjectRouter, userRouter } from "./routers";
+import { authRouter, maintenanceRouter, statsRouter, studentRouter, subjectRouter, userRouter } from "./routers";
 
 dotenv.config()
 
@@ -26,6 +26,7 @@ app.use(maintenanceRouter)
 app.use(studentRouter);
 app.use(subjectRouter)
 app.use(userRouter);
+app.use(statsRouter);
 
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT}`)
